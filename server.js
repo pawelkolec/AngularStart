@@ -13,7 +13,7 @@ if(process.env.NODE_ENV == 'production') {
 	STATIC_DIR += '/dist/';
 }
 else {
-	STATIC_DIR += '/app/';
+	STATIC_DIR += '/src/';
 }
 
 app.use(logger('dev'));

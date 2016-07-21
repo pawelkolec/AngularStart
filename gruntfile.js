@@ -1,8 +1,8 @@
 module.exports = function(grunt) {
-	'use strict'; 
-    
+	'use strict';
+
     var path = require('path');
-    
+
     grunt.initConfig({
         express: {
 			dev: {
@@ -19,82 +19,98 @@ module.exports = function(grunt) {
       			}
     		}
 	  	},
-		
+
         watch: {
-		  	options: {
-    			livereload: true
-  			},
-    		express: {
-      			files:  [ 
-                    '**/*.js'
-                ],
-      			tasks:  [ 'express:dev' ],
-      			options: {
-        			spawn: false // for grunt-contrib-watch v0.5.0+, "nospawn: true" for lower versions. Without this option specified 	express won't be reloaded
-      			}
-    		}
+			reload: {
+				files:  [ '**/*.less' ],
+				tasks:  [ 'less' ]
+			}
   		},
-        
+
         processhtml: {
 			dist: {
 		  		files: {
-					'dist/index.html': ['app/index.html']
-			  	}
+					'dist/index.html': ['src/index.html']
+			  	},
+				options: {
+					commentMarker: 'processhtml'
+				}
 			}
 	  	},
-		
-		cssmin: {
-	  		target: {
-				files: {
-			  		'dist/style.min.css': ['app/bower_components/bootstrap/dist/css/bootstrap.css', 'app/bower_components/bootstrap/dist/css/bootstrap-theme.css', 'app/css/build/**/*.css']
-				}
-		  	}
-  		},
-		
+
+		useminPrepare: {
+			html: ['src/index.html'],
+		    options: {
+		    root: 'src',
+		    dest: 'dist'
+		    }
+		},
+
+		usemin: {
+			html: ['dist/index.html']
+		},
+
 		copy: {
 			main: {
 				files: [
-					{ expand: true, cwd: 'app', src: ['partials/**'], dest: 'dist' },
-					{ expand: true, cwd: 'app', src: ['img/**'], dest: 'dist' },
+					{ expand: true, cwd: 'src', src: ['**/*.html', '!**/index.html'], dest: 'dist' },
+					{ expand: true, cwd: 'src', src: ['img/**'], dest: 'dist' },
 				],
 			},
 		},
-		
-		uglify: {
-			main: {
+
+		less: {
+			styles: {
+	            files: [
+	                {
+	                  expand: true,
+	                  cwd: 'src/',
+	                  src: ['**/*.less', '!**/bower_components/**'],
+	                  dest: 'src/css',
+	                  ext: '.css'
+	                }
+	              ]
+			  }
+        },
+
+		wiredep: {
+			task: {
+				src: [
+					'src/index.html'
+				],
+			}
+		},
+
+		includeSource: {
+			options: {
+				basePath: 'src'
+			},
+			myTarget: {
 				files: {
-					'dist/build.min.js': [
-						'app/bower_components/jquery/dist/jquery.js',
-						'app/bower_components/angular/angular.js',
-						'app/bower_components/angular-resource/angular-resource.js',
-						'app/bower_components/angular-ui-router/release/angular-ui-router.min.js',
-						'app/bower_components/angular-animate/angular-animate.js',
-						'app/js/**/*.js'
-					]
+					'src/index.html': 'src/index.html'
 				}
 			}
 		},
-		
-		less: {
-            production: {
-                files: [
-                    {
-                      expand: true,
-                      cwd: 'app/css/',
-                      src: ['**/*.less'],
-                      dest: 'app/css/build',
-                      ext: '.css'
-                    }
-                  ]
-            },
-        },
+
+		injector: {
+			options: {
+				addRootSlash: false,
+        		ignorePath: 'src/'
+			},
+			local_dependencies: {
+				files: {
+					'src/index.html': ['bower.json', 'src/app.js', 'src/**/*.js', '!src/**/*.spec.js', 'src/css/**/*.css', '!**/bower_components/**'],
+				},
+				cwd: 'src'
+			}
+		},
 
 		clean: {
 			dist: ["dist"],
-			removeCss: ["app/css/build"]
+			removeCss: ["src/css/build"]
 		}
     });
-    
+
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -104,8 +120,15 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-express-server');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-less');
-	
-	grunt.registerTask('build-dist', ["clean:dist", "processhtml", "less:production", "cssmin", "clean:removeCss", "uglify", 'copy']);
-	grunt.registerTask('serve', ['express:dev', 'watch']);
-	grunt.registerTask('serve:dist', ['build-dist', 'express:prod']);
+	grunt.loadNpmTasks('grunt-wiredep');
+	grunt.loadNpmTasks('grunt-include-source');
+	grunt.loadNpmTasks('grunt-injector');
+	grunt.loadNpmTasks('grunt-usemin');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+
+	grunt.registerTask('build:src', ['wiredep', 'less', 'injector:local_dependencies']);
+	grunt.registerTask('build:dist', ['clean:dist', 'build:src', 'useminPrepare', 'concat:generated', 'cssmin:generated', 'uglify:generated', 'usemin', 'processhtml', 'copy']);
+
+	grunt.registerTask('serve', ['build:src', 'express:dev', 'watch:reload']);
+	grunt.registerTask('serve:dist', ['build:dist', 'express:prod']);
 }

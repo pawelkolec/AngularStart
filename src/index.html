@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>Angular</title>
+
+    <!-- processhtml:css css/style.min.css -->
+        <!-- build:css css/style.min.css -->
+            <!-- injector:css -->
+            <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+            <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
+            <link rel="stylesheet" href="css/app.css">
+            <link rel="stylesheet" href="css/footer/footer.css">
+            <link rel="stylesheet" href="css/header/header.css">
+            <link rel="stylesheet" href="css/mainpage/mainpage.css">
+            <!-- endinjector -->
+        <!-- endbuild -->
+    <!-- /processhtml -->
+
+</head>
+<body>
+    <div ui-view="header"></div>
+
+    <div ui-view="content"></div>
+
+    <div ui-view="footer"></div>
+
+    <!-- processhtml:js js/build.min.js -->
+        <!-- build:js js/build.min.js -->
+            <!-- injector:js -->
+            <script src="bower_components/jquery/dist/jquery.js"></script>
+            <script src="bower_components/angular/angular.js"></script>
+            <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+            <script src="app.js"></script>
+            <script src="app.route.js"></script>
+            <script src="footer/footer.controller.js"></script>
+            <script src="header/header.controller.js"></script>
+            <script src="mainpage/mainpage.controller.js"></script>
+            <!-- endinjector -->
+        <!-- endbuild -->
+    <!-- /processhtml -->
+
+</body>
+</html>
