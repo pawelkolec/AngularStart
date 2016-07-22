@@ -8,7 +8,8 @@ module.exports = function(grunt) {
 			dev: {
 		  		options: {
 					script: 'server.js',
-					background: true
+					background: true,
+  					livereload: true
 			  	}
 			},
 		  	prod: {
@@ -22,8 +23,11 @@ module.exports = function(grunt) {
 
         watch: {
 			reload: {
-				files:  [ '**/*.less' ],
-				tasks:  [ 'less' ]
+				files:  [ 'src/app/**/*.less' ],
+				tasks:  [ 'less' ],
+			    options: {
+		      		livereload: true,
+			    }
 			}
   		},
 
@@ -53,8 +57,8 @@ module.exports = function(grunt) {
 		copy: {
 			main: {
 				files: [
-					{ expand: true, cwd: 'src', src: ['**/*.html', '!**/index.html'], dest: 'dist' },
-					{ expand: true, cwd: 'src', src: ['img/**'], dest: 'dist' },
+					{ expand: true, cwd: 'src', src: ['app/**/*.html'], dest: 'dist' },
+					{ expand: true, cwd: 'src', src: ['app/img/**'], dest: 'dist' },
 				],
 			},
 		},
@@ -65,7 +69,7 @@ module.exports = function(grunt) {
 	                {
 	                  expand: true,
 	                  cwd: 'src/',
-	                  src: ['**/*.less', '!**/bower_components/**'],
+	                  src: ['src/app/**/*.less'],
 	                  dest: 'src/css',
 	                  ext: '.css'
 	                }
@@ -99,9 +103,32 @@ module.exports = function(grunt) {
 			},
 			local_dependencies: {
 				files: {
-					'src/index.html': ['bower.json', 'src/app.js', 'src/**/*.js', '!src/**/*.spec.js', 'src/css/**/*.css', '!**/bower_components/**'],
+					'src/index.html': ['bower.json', 'src/app/app.js', 'src/app/**/*.js', '!src/app/**/*.spec.js', 'src/app/css/**/*.css'],
 				},
 				cwd: 'src'
+			}
+		},
+
+		karma: {
+			unit: {
+				options: {
+					files: [
+						'src/bower_components/jquery/dist/jquery.js',
+			            'src/bower_components/angular/angular.js',
+      					'src/bower_components/angular-mocks/angular-mocks.js',
+			            'src/bower_components/angular-ui-router/release/angular-ui-router.js',
+						'src/app/app.js',
+						'src/app/**/*.js'
+					],
+					browsers : ['Chrome', 'Firefox'],
+				    plugins : [
+			            'karma-chrome-launcher',
+			            'karma-firefox-launcher',
+			            'karma-jasmine'
+		            ],
+				    autoWatch : true,
+				    frameworks: ['jasmine']
+				}
 			}
 		},
 
@@ -125,6 +152,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-injector');
 	grunt.loadNpmTasks('grunt-usemin');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-karma');
 
 	grunt.registerTask('build:src', ['wiredep', 'less', 'injector:local_dependencies']);
 	grunt.registerTask('build:dist', ['clean:dist', 'build:src', 'useminPrepare', 'concat:generated', 'cssmin:generated', 'uglify:generated', 'usemin', 'processhtml', 'copy']);

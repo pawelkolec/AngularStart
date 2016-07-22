@@ -9,10 +9,10 @@
             <!-- injector:css -->
             <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
             <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
-            <link rel="stylesheet" href="css/app.css">
-            <link rel="stylesheet" href="css/footer/footer.css">
-            <link rel="stylesheet" href="css/header/header.css">
-            <link rel="stylesheet" href="css/mainpage/mainpage.css">
+            <link rel="stylesheet" href="app/css/app.css">
+            <link rel="stylesheet" href="app/css/footer/footer.css">
+            <link rel="stylesheet" href="app/css/header/header.css">
+            <link rel="stylesheet" href="app/css/mainpage/mainpage.css">
             <!-- endinjector -->
         <!-- endbuild -->
     <!-- /processhtml -->
@@ -25,17 +25,21 @@
 
     <div ui-view="footer"></div>
 
+    <!-- processhtml:remove -->
+        <script src="//localhost:35729/livereload.js"></script>
+    <!-- /processhtml -->
+
     <!-- processhtml:js js/build.min.js -->
         <!-- build:js js/build.min.js -->
             <!-- injector:js -->
             <script src="bower_components/jquery/dist/jquery.js"></script>
             <script src="bower_components/angular/angular.js"></script>
             <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-            <script src="app.js"></script>
-            <script src="app.route.js"></script>
-            <script src="footer/footer.controller.js"></script>
-            <script src="header/header.controller.js"></script>
-            <script src="mainpage/mainpage.controller.js"></script>
+            <script src="app/app.js"></script>
+            <script src="app/app.route.js"></script>
+            <script src="app/footer/footer.controller.js"></script>
+            <script src="app/header/header.controller.js"></script>
+            <script src="app/mainpage/mainpage.controller.js"></script>
             <!-- endinjector -->
         <!-- endbuild -->
     <!-- /processhtml -->
